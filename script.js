@@ -137,7 +137,6 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
         printNewRound();
     }
 
-
     // Initial print
     printNewRound();
 

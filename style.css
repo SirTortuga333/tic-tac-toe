@@ -38,3 +38,32 @@ h1, h2, h3, h4, h5, h6 {
     isolation: isolate;
 }
 /* End of CSS Reset */
+
+body {
+    background-color: #000;
+    color: #fff;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 5fr;   
+    place-items: center;
+}
+
+.game-container{
+    display: grid;
+    grid-template-columns: repeat(3, 8rem);
+    grid-template-rows: repeat(3, 8rem);
+    place-items: center;
+    gap: 1rem;
+}
+
+.game-container > div > button{
+    width: 8rem;
+    height: 8rem;
+    border-radius: 1rem;
+    border: none;
+    font-size: 2rem;
+    font-weight: bold;
+    background-color: #5f5f5f;
+    color: #fff;
+}
