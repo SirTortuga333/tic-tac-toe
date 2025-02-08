@@ -47,6 +47,42 @@ function cell(){
     return {getClaimed, getMark};
 }
 
+const screenController = (function(doc){
+    const gameContainer = doc.querySelector('.game-container');
+    const messageDisplay = doc.querySelector('.player-turn');
+
+    function displayActivePlayer(player){
+        messageDisplay.textContent = `${player}'s turn.`;
+    }
+
+    function displayGameBoard(){
+
+        // delete previous buttons
+        const previousBoard = gameContainer.querySelectorAll('*');
+        previousBoard.forEach(element => {
+            gameContainer.removeChild(element);
+        });
+
+        // Create new buttons
+        for (let index = 0; index < gameBoard.getBoard().length; index++) {
+            const cellButton = doc.createElement('button');
+            cellButton.dataset.index = index;
+            cellButton.textContent = gameBoard.getBoard()[index].getMark();
+
+            // Only empty cells are claimable
+            if(cellButton.textContent = ' '){
+                cellButton.addEventListener('click', playerClaimCell);
+            }
+
+            gameContainer.appendChild(cellButton);
+        }
+    }   
+
+    displayGameBoard()
+    return {displayActivePlayer, displayGameBoard}
+
+})(document);
+
 const gameController = (function(playerOneName = "Player One", playerTwoName = "Player Two"){
 
     const players = [
@@ -135,44 +171,20 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
 
         switchPlayerTurn();
         printNewRound();
+        screenController.displayGameBoard();
+        screenController.displayActivePlayer(getActivePlayer().name);
     }
 
     // Initial print
     printNewRound();
+    screenController.displayGameBoard();
+    screenController.displayActivePlayer(getActivePlayer().name);
 
     return {playRound, printNewRound, getActivePlayer}
 })();
 
-const screenController = (function(doc){
-    const gameContainer = doc.querySelector('.game-container');
-    const messageDisplay = doc.querySelector('.player-turn');
-
-    function displayActivePlayer(player){
-        messageDisplay.textContent = `${player}'s turn.`;
-    }
-
-    function displayGameBoard(){
-        for (let index = 0; index < gameBoard.getBoard().length; index++) {
-            const cellButton = doc.createElement('button');
-            cellButton.dataset.index = index;
-            cellButton.textContent = gameBoard.getBoard()[index].getMark();
-
-            // Only empty cells are claimable
-            if(cellButton.textContent = ' '){
-                cellButton.addEventListener('click', playerClaimCell);
-            }
-
-            gameContainer.appendChild(cellButton);
-        }
-    }   
-
-
-    displayGameBoard()
-    return {displayActivePlayer, displayGameBoard}
-
-})(document);
-
 // Function for Event listeners on Cell Buttons
 function playerClaimCell(e){
-    console.log(e)
+    // It only needs gameController.playRound
+    gameController.playRound(parseInt(e.target.dataset.index))
 }
