@@ -6,10 +6,15 @@ const gameBoard = (function(){
     // 6 7 8
     const board = [];
 
-    for (let i = 0; i < 9; i++) {
-        board.push(cell());
-    }
+
+    function prepareBoard(){
     
+        board.splice(0, board.length);
+    
+        for (let i = 0; i < 9; i++) {
+            board.push(cell());
+        }    
+    }
     function markCell(cell, player){
 
         // Invalid move on already marked cell
@@ -30,7 +35,9 @@ const gameBoard = (function(){
         return board;
     }
 
-    return {printBoard, markCell, getBoard}
+    prepareBoard();
+
+    return {printBoard, markCell, getBoard, prepareBoard}
 })();
 
 function cell(){
@@ -51,8 +58,15 @@ const screenController = (function(doc){
     const gameContainer = doc.querySelector('.game-container');
     const messageDisplay = doc.querySelector('.player-turn');
 
+    const startButton = document.querySelector('#start');
+    startButton.addEventListener('click', startNewGame);
+
     function displayActivePlayer(player){
         messageDisplay.textContent = `${player}'s turn.`;
+    }
+
+    function displayGameOver(message){
+        messageDisplay.textContent = message;
     }
 
     function displayGameBoard(){
@@ -67,7 +81,6 @@ const screenController = (function(doc){
         for (let index = 0; index < gameBoard.getBoard().length; index++) {
             const cellButton = doc.createElement('button');
             cellButton.dataset.index = index;
-            console.log(gameBoard.getBoard()[index].getMark())
             cellButton.textContent = gameBoard.getBoard()[index].getMark();
 
             // Only empty cells are claimable
@@ -80,7 +93,7 @@ const screenController = (function(doc){
     }   
 
     displayGameBoard()
-    return {displayActivePlayer, displayGameBoard}
+    return {displayActivePlayer, displayGameBoard, displayGameOver}
 
 })(document);
 
@@ -95,6 +108,11 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
             mark: 'O'
         }
     ]
+
+    function changePlayerName(newName){
+        players[0].name = prompt('Enter player one name:','Player One');
+        players[1].name = prompt('Enter player two name:','Player two');
+    }
 
     // Save all winning combinations
     const winningCombinations = [
@@ -118,6 +136,7 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
                 gameBoard.getBoard()[c].getMark() === getActivePlayer().mark
             ){
                 screenController.displayGameBoard();
+                screenController.displayGameOver(`${getActivePlayer().name} has won! Game Over.`);
                 return true
             }
         }
@@ -128,6 +147,7 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
     // we loop through all the board to check every tile is mark
     function checkTie(){
         screenController.displayGameBoard();
+        screenController.displayGameOver(`${getActivePlayer().name} has tie the game! Nobody Wins.`);
         return gameBoard.getBoard().every((cell) => cell.getMark() !== ' ');
     }
 
@@ -181,15 +201,24 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
     }
 
     // Initial print
+    changePlayerName();
     printNewRound();
     screenController.displayGameBoard();
     screenController.displayActivePlayer(getActivePlayer().name);
 
-    return {playRound, printNewRound, getActivePlayer}
+    return {playRound, printNewRound, getActivePlayer, changePlayerName}
 })();
 
 // Function for Event listeners on Cell Buttons
 function playerClaimCell(e){
     // It only needs gameController.playRound
     gameController.playRound(parseInt(e.target.dataset.index))
+}
+
+function startNewGame(){
+    gameBoard.prepareBoard();
+    gameController.changePlayerName();
+    gameController.printNewRound();
+    screenController.displayGameBoard();
+    screenController.displayActivePlayer(gameController.getActivePlayer().name);
 }
