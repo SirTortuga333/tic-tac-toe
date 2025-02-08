@@ -57,6 +57,12 @@ body {
     gap: 2rem;
 }
 
+.ui > #start{
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
 .ui > .player-turn{
     font-size: 1.5rem;
     background: #2f2f2f;

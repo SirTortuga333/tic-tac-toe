@@ -67,10 +67,11 @@ const screenController = (function(doc){
         for (let index = 0; index < gameBoard.getBoard().length; index++) {
             const cellButton = doc.createElement('button');
             cellButton.dataset.index = index;
+            console.log(gameBoard.getBoard()[index].getMark())
             cellButton.textContent = gameBoard.getBoard()[index].getMark();
 
             // Only empty cells are claimable
-            if(cellButton.textContent = ' '){
+            if(cellButton.textContent === ' '){
                 cellButton.addEventListener('click', playerClaimCell);
             }
 
@@ -115,7 +116,10 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
                 gameBoard.getBoard()[a].getMark() === getActivePlayer().mark &&
                 gameBoard.getBoard()[b].getMark() === getActivePlayer().mark &&
                 gameBoard.getBoard()[c].getMark() === getActivePlayer().mark
-            ) return true
+            ){
+                screenController.displayGameBoard();
+                return true
+            }
         }
         return false
     
@@ -123,6 +127,7 @@ const gameController = (function(playerOneName = "Player One", playerTwoName = "
 
     // we loop through all the board to check every tile is mark
     function checkTie(){
+        screenController.displayGameBoard();
         return gameBoard.getBoard().every((cell) => cell.getMark() !== ' ');
     }
 
